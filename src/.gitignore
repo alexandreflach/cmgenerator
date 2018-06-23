@@ -1,0 +1,16 @@
+bin/
+
+obj/
+
+packages/
+
+logs/
+
+Tools
+
+*.suo
+*.user
+*.bak
+Web.config
+
+App_Data/*.xml
