@@ -8,6 +8,7 @@ using CMGenerator.Models;
 using CsvHelper;
 using Serilog.Core;
 using System.Linq;
+using OfficeOpenXml;
 
 namespace CMGenerator
 {
@@ -35,59 +36,74 @@ namespace CMGenerator
             Console.WriteLine("Escrevendo resultados.csv");
             GenerateCsvRegisters(directoryResults, registers);
 
+            List<StockControlReport> stocksControl = GetStockControlReport(registers);
+
             Console.WriteLine("Escrevendo controleacoes.csv");
-            GenerateStockControlReport(directoryResults, registers);
+            GenerateStockControlReport(directoryResults, stocksControl);
+
+            Console.WriteLine("changecontrolreport.xlsx");
+            GenerateChangeControlWorkshet(directoryResults, stocksControl, registers, configuration);
         }
 
-        private static void GenerateStockControlReport(string directoryResults, List<Register> registers)
+        private static void GenerateChangeControlWorkshet(string directoryResults, List<StockControlReport> stocksControl, List<Register> registers, Configuration configuration)
         {
-            var list = registers.GroupBy(x => x.Area.Name)
-                .Select(r =>
-                   new StockControlReport
-                   {
-                       Area = r.First().Area.Name,
-                       ActionOutOfTime = r.Where(x => x.PrevisionDate.Date < DateTime.Now.Date && x.ConclusionDate == DateTime.MinValue).Count(),
-                       ActionOnTime = r.Where(x => x.PrevisionDate.Date >= DateTime.Now.Date && x.ConclusionDate == DateTime.MinValue).Count(),
-                       ActionClosed = r.Where(x => x.ConclusionDate != DateTime.MinValue && x.ConclusionDate != DateTime.MaxValue).Count(),
-                       ActionCanceled = r.Where(x => x.PrevisionDate == DateTime.MaxValue || x.ConclusionDate == DateTime.MaxValue).Count(),
-                       Total = r.Count()
-                   }
-               ).OrderBy(x => x.Area);
-                
+            string fileName = Path.Combine(directoryResults, "changecontrolreport.xlsx");
+            if (File.Exists(fileName))
+                File.Delete(fileName);
+
+            var fi = new FileInfo(fileName);
+
+            using (var p = new ExcelPackage(fi))
+            {
+                new ChangeControlReport().Create(p, registers, stocksControl, configuration);
+                p.Save();
+            }
+        }
+
+        private static void GenerateStockControlReport(string directoryResults, List<StockControlReport> registers)
+        {
+            string fileName = Path.Combine(directoryResults, "controleacoes.csv");
+            ExportCsv(registers, fileName);
+        }
+
+        private static void GenerateCsvRegisters(string directoryResults, List<Register> registers)
+        {
+            string fileName = Path.Combine(directoryResults, "resultados.csv");
+            ExportCsv(registers, fileName);
+        }
+
+        private static List<StockControlReport> GetStockControlReport(List<Register> registers)
+        {
+            return registers.GroupBy(x => x.Area.Name.Trim())
+                            .Select(r =>
+                               new StockControlReport
+                               {
+                                   Area = r.First().Area.Name,
+                                   ActionOutOfTime = r.Where(x => x.PrevisionDate.Date < DateTime.Now.Date && x.ConclusionDate == DateTime.MinValue).Count(),
+                                   ActionOnTime = r.Where(x => x.PrevisionDate.Date >= DateTime.Now.Date && x.ConclusionDate == DateTime.MinValue).Count(),
+                                   ActionClosed = r.Where(x => x.ConclusionDate != DateTime.MinValue && x.ConclusionDate != DateTime.MaxValue).Count(),
+                                   ActionCanceled = r.Where(x => x.PrevisionDate == DateTime.MaxValue || x.ConclusionDate == DateTime.MaxValue).Count(),
+                                   Total = r.Count()
+                               }
+                           ).OrderBy(x => x.Area).ToList();
+        }
+
+        private static void ExportCsv<T>(List<T> registers, string fileName)
+        {
             var stream = new MemoryStream();
 
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             {
                 var csv = new CsvWriter(writer);
                 csv.Configuration.Delimiter = ";";
-                csv.WriteHeader<StockControlReport>();
+                csv.WriteHeader<T>();
                 csv.NextRecord();
-                csv.WriteRecords(list);
+                csv.WriteRecords(registers);
                 csv.Flush();
 
                 stream.Position = 0;
-                File.WriteAllBytes(Path.Combine(directoryResults, "controleacoes.csv"), stream.ToArray());
+                File.WriteAllBytes(fileName, stream.ToArray());
             }
-        }
-
-        private static void GenerateCsvRegisters(string directoryResults, List<Register> registros)
-        {
-            var stream = new MemoryStream();
-
-            using (var writer = new StreamWriter(stream, Encoding.UTF8))
-            {
-                var csv = new CsvWriter(writer);
-                csv.Configuration.Delimiter = ";";
-                csv.WriteHeader<Register>();
-                csv.NextRecord();
-                csv.WriteRecords(registros);
-                csv.Flush();
-
-                stream.Position = 0;
-                File.WriteAllBytes(Path.Combine(directoryResults, "resultados.csv"), stream.ToArray());
-            }
-
-
         }
     }
 }
