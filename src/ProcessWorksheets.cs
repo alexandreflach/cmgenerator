@@ -20,7 +20,7 @@ namespace CMGenerator
 
             List<Register> registers = new List<Register>();
 
-            foreach (var file in new DirectoryInfo(directoryWorksheets).GetFiles())
+            foreach (var file in new DirectoryInfo(directoryWorksheets).GetFiles().OrderBy(x => x.Name))
             {
                 Console.WriteLine("Carregando planilha '" + file.Name + "'..");
                 try

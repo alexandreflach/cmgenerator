@@ -30,6 +30,7 @@ namespace CMGenerator.Helper
                 areaWorksheetNames.Add(stock.Area, worksheetName);
 
                 var ws = excel.Workbook.Worksheets.Add(worksheetName);
+                ws.TabColor = Color.YellowGreen;
 
                 ws.Cells["A1:D1500"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 ws.Cells["A1:D1500"].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
@@ -229,7 +230,7 @@ namespace CMGenerator.Helper
             title.Value = titulo;
             title.Style.Font.Bold = true;
             title.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            title.Style.Fill.BackgroundColor.SetColor(Color.LimeGreen);
+            title.Style.Fill.BackgroundColor.SetColor(Color.YellowGreen);
 
             title = ws.Cells["A" + ++position + ":C" + position];
             title.Style.Fill.PatternType = ExcelFillStyle.Solid;
