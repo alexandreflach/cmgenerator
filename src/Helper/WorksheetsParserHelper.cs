@@ -63,6 +63,9 @@ namespace CMGenerator.Helper
                 register.Action = Configuration.PositionAction != int.MinValue ? GetCellValue(ws, rowNumber, Configuration.PositionAction) : string.Empty;
                 register.PrevisionDate = GetDateCellValue(ws, rowNumber, Configuration.PositionPrevisionDate);
                 register.ConclusionDate = GetDateCellValue(ws, rowNumber, Configuration.PositionConclusionDate);
+                register.ExtensionOne = GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionOne);
+                register.ExtensionTwo = GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionTwo);
+                register.ExtensionThree = GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionThree);
                 return register;
             }
             catch (Exception e)
@@ -89,6 +92,12 @@ namespace CMGenerator.Helper
                     Configuration.PositionPrevisionDate = i;
                 if (Configuration.ColumnConclusionDate.Equals(columnName))
                     Configuration.PositionConclusionDate = i;
+                if (Configuration.ColumnExtensionOne.Equals(columnName))
+                    Configuration.PositionExtensionOne = i;
+                if (Configuration.ColumnExtensionTwo.Equals(columnName))
+                    Configuration.PositionExtensionTwo = i;
+                if (Configuration.ColumnExtensionThree.Equals(columnName))
+                    Configuration.PositionExtensionThree = i;
             }
 
             Configuration.ValidatedPosition();

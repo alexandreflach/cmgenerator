@@ -16,6 +16,12 @@ namespace cmgenerator.Models
 
         public DateTime ConclusionDate { get; set; }
 
+        public DateTime ExtensionOne { get; set; }
+
+        public DateTime ExtensionTwo { get; set; }
+
+        public DateTime ExtensionThree { get; set; }
+
         public string Source { get; set; }
 
         public override string ToString()

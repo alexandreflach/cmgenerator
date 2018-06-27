@@ -17,5 +17,19 @@ namespace CMGenerator.Models
         public int ActionCanceled { get; set; }
 
         public int Total { get; set; }
+
+        public int CountExtensionOne { get; set; }
+
+        public int CountExtensionTwo { get; set; }
+
+        public int CountExtensionThree { get; set; }
+
+        public int TotalExtension
+        {
+            get
+            {
+                return CountExtensionOne + CountExtensionTwo + CountExtensionThree;
+            }
+        }
     }
 }
