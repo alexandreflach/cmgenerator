@@ -42,7 +42,7 @@ namespace CMGenerator.Helper
                 int position = 2;
                 position = WriteChangeControlHeader(ws, position, stock);
 
-                position = WriteChangeControlDetails(ws, ++position, registers.Where(x => x.Area.Name == stock.Area && x.ConclusionDate == DateTime.MinValue).OrderBy(x => x.Number).ToList(), configuration);
+                position = WriteChangeControlDetails(ws, ++position, registers.Where(x => x.Area.Name.Trim() == stock.Area.Trim() && x.ConclusionDate == DateTime.MinValue).OrderBy(x => x.Number).ToList(), configuration);
 
                 position = WriteChangeControlFooter(ws, position);
 
@@ -160,12 +160,12 @@ namespace CMGenerator.Helper
             ws.Cells["A" + ++position].Value = "Status";
             ws.Cells["B" + position].Value = "Quantidade";
             ws.Cells["A" + ++position].Value = "Ação - A vencer";
-            ws.Cells["B" + position].Value = stock.ActionOutOfTime;
+            ws.Cells["B" + position].Value = stock.ActionOnTime;
 
             ws.Cells["B" + position].Style.Font.Color.SetColor(colorOnTime);
             ws.Cells["B" + position].Style.Font.Bold = true;
             ws.Cells["A" + ++position].Value = "Ação - Atrasado";
-            ws.Cells["B" + position].Value = stock.ActionOnTime;
+            ws.Cells["B" + position].Value = stock.ActionOutOfTime;
 
             ws.Cells["B" + position].Style.Font.Color.SetColor(colorOutOftime);
             ws.Cells["B" + position].Style.Font.Bold = true;
