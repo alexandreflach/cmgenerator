@@ -79,8 +79,8 @@ namespace CMGenerator
                                new StockControlReport
                                {
                                    Area = r.First().Area.Name,
-                                   ActionOutOfTime = r.Where(x => x.PrevisionDate.Date < DateTime.Now.Date && x.ConclusionDate == DateTime.MinValue).Count(),
-                                   ActionOnTime = r.Where(x => x.PrevisionDate.Date >= DateTime.Now.Date && x.ConclusionDate == DateTime.MinValue).Count(),
+                                   ActionOutOfTime = r.Where(x => x.PrevisionDate.Date <= DateTime.Now.Date && x.ConclusionDate == DateTime.MinValue).Count(),
+                                   ActionOnTime = r.Where(x => x.PrevisionDate.Date > DateTime.Now.Date && x.ConclusionDate == DateTime.MinValue).Count(),
                                    ActionClosed = r.Where(x => x.ConclusionDate != DateTime.MinValue && x.ConclusionDate != DateTime.MaxValue).Count(),
                                    ActionCanceled = r.Where(x => x.PrevisionDate == DateTime.MaxValue || x.ConclusionDate == DateTime.MaxValue).Count(),
                                    CountExtensionOne = r.Where(x => x.ExtensionOne != DateTime.MinValue && x.ExtensionOne != DateTime.MaxValue).Count(),

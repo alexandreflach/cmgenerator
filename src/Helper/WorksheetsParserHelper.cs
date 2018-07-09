@@ -106,7 +106,7 @@ namespace CMGenerator.Helper
         private string GetCellValue(ExcelWorksheet ws, int rowNumber, int columnNumber)
         {
             var value = ws.Cells[rowNumber, columnNumber].Value;
-            return value != null ? value.ToString() : string.Empty;
+            return value != null ? value.ToString().Trim() : string.Empty;
         }
 
         private DateTime GetDateCellValue(ExcelWorksheet ws, int rowNumber, int columnNumber)
