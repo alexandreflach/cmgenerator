@@ -1,0 +1,3 @@
+﻿
+--command publish
+dotnet publish -c Release --runtime win7-x86
