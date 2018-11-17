@@ -50,6 +50,41 @@ namespace CMGenerator.Helper
             return list;
         }
 
+        internal void LoadProducts(FileInfo file, List<Register> registers)
+        {
+            using (var p = new ExcelPackage(file))
+            {
+                try
+                {
+                    var ws = GetWorksheetProduct(p);
+                    LoadColumnPosition(ws, false);
+                    if(Configuration.PositionNumber == int.MinValue || Configuration.PositionProduct == int.MinValue)
+                    {
+                        Log.Warning(string.Format("Colunas ({0} e {1}) não encontradas Planilha ({2}) arquivo: {3}", 
+                            Configuration.ColumnNumber, Configuration.ColumnProduct, ws.Name, file.Name));
+                        return;
+                    }
+
+                    for (int i = 2; i < ws.Dimension.End.Row; i++)
+                    {
+                        var number = GetCellValue(ws, i, Configuration.PositionNumber);
+                        if (string.IsNullOrEmpty(number) || !registers.Exists(x => x.Number == number))
+                            continue;
+
+                        var product = GetCellValue(ws, i, Configuration.PositionProduct);
+                        if (string.IsNullOrEmpty(product)) continue;
+
+                        foreach (var r in registers.FindAll(x => x.Number == number))
+                            r.Product = product;
+                    }
+                }
+                catch (FileNotFoundException e)
+                {
+                    Log.Warning(string.Format("Planilha ({0}) não encontrada em {1}", e.Message, file.Name));
+                }
+            }
+        }
+
         private Register GetRegister(ExcelWorksheet ws, int rowNumber)
         {
             try
@@ -75,7 +110,7 @@ namespace CMGenerator.Helper
             }
         }
 
-        private void LoadColumnPosition(ExcelWorksheet ws)
+        private void LoadColumnPosition(ExcelWorksheet ws, bool validar = true)
         {
             Configuration.CleanPosition();
 
@@ -98,9 +133,12 @@ namespace CMGenerator.Helper
                     Configuration.PositionExtensionTwo = i;
                 if (Configuration.ColumnExtensionThree.Equals(columnName))
                     Configuration.PositionExtensionThree = i;
+                if (Configuration.ColumnProduct.Equals(columnName))
+                    Configuration.PositionProduct = i;
             }
 
-            Configuration.ValidatedPosition();
+            if(validar)
+                Configuration.ValidatedPosition();
         }
 
         private string GetCellValue(ExcelWorksheet ws, int rowNumber, int columnNumber)
@@ -143,6 +181,14 @@ namespace CMGenerator.Helper
                 if (w.Name.Contains(Configuration.WorksheetName)) return w;
 
             throw new Exception("Não encontrada planilha, verifique se existe a planilha com nome: " + Configuration.WorksheetName);
+        }
+
+        private ExcelWorksheet GetWorksheetProduct(ExcelPackage p)
+        {
+            foreach (var w in p.Workbook.Worksheets)
+                if (w.Name.Contains(Configuration.WorksheetProductName)) return w;
+
+            throw new FileNotFoundException(Configuration.WorksheetProductName);
         }
     }
 }

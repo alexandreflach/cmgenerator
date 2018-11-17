@@ -16,7 +16,7 @@ namespace CMGenerator
     {
         internal static void Execute(string directoryWorksheets, string directoryResults, Configuration configuration, Logger log)
         {
-            var parser = new WorksheetsParserHelper(configuration, log);
+            var parserHelper = new WorksheetsParserHelper(configuration, log);
 
             List<Register> registers = new List<Register>();
 
@@ -25,7 +25,8 @@ namespace CMGenerator
                 Console.WriteLine("Carregando planilha '" + file.Name + "'..");
                 try
                 {
-                    registers.AddRange(parser.Parse(file));
+                    registers.AddRange(parserHelper.Parse(file));
+                    parserHelper.LoadProducts(file, registers);
                 }
                 catch (Exception e)
                 {

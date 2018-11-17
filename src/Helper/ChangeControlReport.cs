@@ -183,31 +183,41 @@ namespace CMGenerator.Helper
         private int WriteChangeControlDetails(ExcelWorksheet ws, int position, List<Register> registers, Configuration configuration)
         {
             int startPosition = position;
+            string columnCM = "A";
+            string columnProduct = "B";
+            string columnAction= "C";
+            string columnPrevisionDate = "D";
+            string columnStatus = "E";
 
-            var header = ws.Cells["A" + position + ":D" + position];
+            var header = ws.Cells[columnCM + position + ":" + columnStatus + position];
             header.Style.Font.Bold = true;
             header.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             header.Style.Fill.PatternType = ExcelFillStyle.Solid;
             header.Style.Fill.BackgroundColor.SetColor(Color.Gainsboro);
             SetBorder(header);
 
-            ws.Cells["A" + position].Value = "CM";
-            ws.Cells["B" + position].Value = "Título da ação";
-            ws.Cells["C" + position].Value = "Prazo para Execução";
-            ws.Cells["D" + position].Value = "Status";
-            ws.Cells["D" + position].AutoFilter = true;
+            ws.Cells[columnCM + position].Value = "CM";
+            ws.Cells[columnProduct + position].Value = "Código do Material / Produto";
+            ws.Cells[columnAction + position].Value = "Título da ação";
+            ws.Cells[columnPrevisionDate + position].Value = "Prazo para Execução";
+            ws.Cells[columnStatus + position].Value = "Status";
+            ws.Cells[columnStatus + position].AutoFilter = true;
 
             foreach (var register in registers)
             {
-                ws.Cells["A" + ++position].Value = register.Number;
-                ws.Cells["B" + position].Value = register.Action;
-                ws.Cells["B" + position].Style.WrapText = true;
-                ws.Cells["C" + position].Value = register.PrevisionDate.ToString(configuration.DateFormat);
-                ws.Cells["C" + position].Style.Font.Color.SetColor(register.PrevisionDate < DateTime.Now ? colorOutOftime : colorOnTime);
-                ws.Cells["D" + position].Value = register.PrevisionDate < DateTime.Now ? "Atrasado" : "A vencer";
+                ws.Cells[columnCM + ++position].Value = register.Number;
+                ws.Cells[columnProduct + position].Value = register.Product;
+                ws.Cells[columnAction + position].Value = register.Action;
+                ws.Cells[columnAction + position].Style.WrapText = true;
+                ws.Cells[columnPrevisionDate + position].Value = 
+                    register.PrevisionDate.ToString(configuration.DateFormat);
+                ws.Cells[columnPrevisionDate + position].Style.Font.Color.SetColor(
+                    register.PrevisionDate < DateTime.Now ? colorOutOftime : colorOnTime);
+                ws.Cells[columnStatus + position].Value = register.PrevisionDate < DateTime.Now 
+                    ? "Atrasado" : "A vencer";
             }
 
-            SetBorder(ws.Cells["A" + startPosition + ":D" + position]);
+            SetBorder(ws.Cells[columnCM + startPosition + ":" + columnStatus + position]);
 
             return ++position;
         }

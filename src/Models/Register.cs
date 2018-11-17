@@ -24,6 +24,8 @@ namespace cmgenerator.Models
 
         public string Source { get; set; }
 
+        public string Product { get; set; }
+
         public override string ToString()
         {
             return Number;

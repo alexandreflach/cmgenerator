@@ -7,6 +7,9 @@ namespace CMGenerator.Models
     public class Configuration
     {
         public string WorksheetName { get; set; }
+
+        public string WorksheetProductName { get; set; }
+
         public string ColumnNumber { get; set; }
 
         public string ColumnResposibleArea { get; set; }
@@ -22,6 +25,8 @@ namespace CMGenerator.Models
         public string ColumnExtensionTwo { get; set; }
 
         public string ColumnExtensionThree { get; set; }
+
+        public string ColumnProduct { get; set; }
 
         public string DateFormat { get; internal set; }
 
@@ -41,11 +46,14 @@ namespace CMGenerator.Models
 
         public int PositionExtensionThree { get; internal set; }
 
+        public int PositionProduct { get; internal set; }
+
         public static Configuration GetDefault()
         {
             return new Configuration
             {
                 WorksheetName = "Controle das Ações",
+                WorksheetProductName = "CM",
                 ColumnNumber = "CM",
                 ColumnResposibleArea = "Área Responsável",
                 ColumnAction = "Plano de Ação",
@@ -54,6 +62,7 @@ namespace CMGenerator.Models
                 ColumnExtensionOne = "1º Prorrogação",
                 ColumnExtensionTwo = "2º Prorrogação",
                 ColumnExtensionThree = "3º Prorrogação",
+                ColumnProduct = "Código do Material / Produto",
                 DateFormat = "d"
             };
         }
@@ -61,7 +70,7 @@ namespace CMGenerator.Models
         internal void CleanPosition()
         {
             PositionNumber = PositionConclusionDate = PositionResponsibleArea = PositionAction = PositionPrevisionDate
-                = PositionExtensionOne = PositionExtensionTwo = PositionExtensionThree
+                = PositionExtensionOne = PositionExtensionTwo = PositionExtensionThree = PositionProduct
                 = int.MinValue;
         }
 
