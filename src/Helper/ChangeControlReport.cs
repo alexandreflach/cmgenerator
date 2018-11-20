@@ -207,6 +207,7 @@ namespace CMGenerator.Helper
             {
                 ws.Cells[columnCM + ++position].Value = register.Number;
                 ws.Cells[columnProduct + position].Value = register.Product;
+                ws.Cells[columnProduct + position].Style.WrapText = true;
                 ws.Cells[columnAction + position].Value = register.Action;
                 ws.Cells[columnAction + position].Style.WrapText = true;
                 ws.Cells[columnPrevisionDate + position].Value = 
