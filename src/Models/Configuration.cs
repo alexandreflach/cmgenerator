@@ -53,7 +53,7 @@ namespace CMGenerator.Models
             return new Configuration
             {
                 WorksheetName = "Controle das Ações",
-                WorksheetProductName = "CM",
+                WorksheetProductName = "FSM",
                 ColumnNumber = "CM",
                 ColumnResposibleArea = "Área Responsável",
                 ColumnAction = "Plano de Ação",
@@ -62,7 +62,7 @@ namespace CMGenerator.Models
                 ColumnExtensionOne = "1º Prorrogação",
                 ColumnExtensionTwo = "2º Prorrogação",
                 ColumnExtensionThree = "3º Prorrogação",
-                ColumnProduct = "Código do Material / Produto",
+                ColumnProduct = "Código Descrição",
                 DateFormat = "d"
             };
         }
