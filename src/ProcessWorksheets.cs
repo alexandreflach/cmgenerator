@@ -26,11 +26,23 @@ namespace CMGenerator
                 try
                 {
                     registers.AddRange(parserHelper.Parse(file));
-                    parserHelper.LoadProducts(file, registers);
                 }
                 catch (Exception e)
                 {
                     log.Error(e, "Erro ao carregar registros da planilha: {0}", file.Name);
+                }
+            }
+
+            foreach (var file in new DirectoryInfo(directoryWorksheets).GetFiles().OrderBy(x => x.Name))
+            {
+                Console.WriteLine("Carregando produtos '" + file.Name + "'..");
+                try
+                {
+                    parserHelper.LoadProducts(file, registers);
+                }
+                catch (Exception e)
+                {
+                    log.Error(e, "Erro ao carregar registros produto na planilha: {0}", file.Name);
                 }
             }
 
