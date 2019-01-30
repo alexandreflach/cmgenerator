@@ -38,7 +38,8 @@ namespace CMGenerator
                 Console.WriteLine("Carregando produtos '" + file.Name + "'..");
                 try
                 {
-                    parserHelper.LoadProducts(file, registers);
+                    parserHelper.LoadProducts(file, registers, false);
+                    parserHelper.LoadProducts(file, registers, true);
                 }
                 catch (Exception e)
                 {
