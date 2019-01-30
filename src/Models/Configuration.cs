@@ -53,7 +53,7 @@ namespace CMGenerator.Models
             return new Configuration
             {
                 WorksheetName = "Controle das Ações",
-                WorksheetProductName = "FSM",
+                WorksheetProductName = "CM",
                 ColumnNumber = "CM",
                 ColumnResposibleArea = "Área Responsável",
                 ColumnAction = "Plano de Ação",
