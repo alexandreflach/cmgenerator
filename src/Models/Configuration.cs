@@ -10,7 +10,7 @@ namespace CMGenerator.Models
 
         public string WorksheetProductName { get; set; }
 
-        public string WorksheetFcmProductName { get; set; }
+        public string WorksheetFsmProductName { get; set; }
 
         public string ColumnNumber { get; set; }
 
@@ -56,7 +56,7 @@ namespace CMGenerator.Models
             {
                 WorksheetName = "Controle das Ações",
                 WorksheetProductName = "CM",
-                WorksheetFcmProductName = "FCM",
+                WorksheetFsmProductName = "FSM",
                 ColumnNumber = "CM",
                 ColumnResposibleArea = "Área Responsável",
                 ColumnAction = "Plano de Ação",

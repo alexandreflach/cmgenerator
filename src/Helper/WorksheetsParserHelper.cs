@@ -50,13 +50,13 @@ namespace CMGenerator.Helper
             return list;
         }
 
-        internal void LoadProducts(FileInfo file, List<Register> registers, bool fcm)
+        internal void LoadProducts(FileInfo file, List<Register> registers, bool fsm)
         {
             using (var p = new ExcelPackage(file))
             {
                 try
                 {
-                    var ws = GetWorksheetProduct(p, fcm);
+                    var ws = GetWorksheetProduct(p, fsm);
                     LoadColumnPosition(ws, false);
                     if(Configuration.PositionNumber == int.MinValue || Configuration.PositionProduct == int.MinValue)
                     {
@@ -183,12 +183,12 @@ namespace CMGenerator.Helper
             throw new Exception("Não encontrada planilha, verifique se existe a planilha com nome: " + Configuration.WorksheetName);
         }
 
-        private ExcelWorksheet GetWorksheetProduct(ExcelPackage p, bool fcm)
+        private ExcelWorksheet GetWorksheetProduct(ExcelPackage p, bool fsm)
         {
             foreach (var w in p.Workbook.Worksheets)
-                if (w.Name.Contains(fcm ? Configuration.WorksheetFcmProductName : Configuration.WorksheetProductName)) return w;
+                if (w.Name.Contains(fsm ? Configuration.WorksheetFsmProductName : Configuration.WorksheetProductName)) return w;
 
-            throw new FileNotFoundException(fcm ? Configuration.WorksheetFcmProductName : Configuration.WorksheetProductName);
+            throw new FileNotFoundException(fsm ? Configuration.WorksheetFsmProductName : Configuration.WorksheetProductName);
         }
     }
 }
