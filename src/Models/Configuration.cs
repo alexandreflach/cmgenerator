@@ -61,7 +61,7 @@ namespace CMGenerator.Models
                 ColumnResposibleArea = "Área Responsável",
                 ColumnAction = "Plano de Ação",
                 ColumnPrevisionDate = "Previsão para Conclusão",
-                ColumnConclusionDate = "Data da Recebimento e Baixa da Evidência",
+                ColumnConclusionDate = "Data de Conclusão da Ação",
                 ColumnExtensionOne = "1º Prorrogação",
                 ColumnExtensionTwo = "2º Prorrogação",
                 ColumnExtensionThree = "3º Prorrogação",
