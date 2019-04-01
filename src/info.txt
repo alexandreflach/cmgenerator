@@ -1,3 +1,6 @@
 ﻿
 --command publish
 dotnet publish -c Release --runtime win7-x86
+
+-- command publish onlyResults
+dotnet publish -c OnlyResults --runtime win7-x86

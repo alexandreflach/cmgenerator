@@ -14,7 +14,7 @@ namespace CMGenerator
 {
     public class ProcessWorksheets
     {
-        internal static void Execute(string directoryWorksheets, string directoryResults, Configuration configuration, Logger log)
+        internal static void Execute(string directoryWorksheets, string directoryResults, Configuration configuration, Logger log, bool onlyResults)
         {
             var parserHelper = new WorksheetsParserHelper(configuration, log);
 
@@ -38,8 +38,8 @@ namespace CMGenerator
                 Console.WriteLine("Carregando produtos '" + file.Name + "'..");
                 try
                 {
-                    parserHelper.LoadProducts(file, registers, false);
-                    parserHelper.LoadProducts(file, registers, true);
+                    parserHelper.LoadProductsAndJustification(file, registers, false);
+                    parserHelper.LoadProductsAndJustification(file, registers, true);
                 }
                 catch (Exception e)
                 {
@@ -47,16 +47,24 @@ namespace CMGenerator
                 }
             }
 
-            Console.WriteLine("Escrevendo resultados.csv");
-            GenerateCsvRegisters(directoryResults, registers);
+            if (!onlyResults)
+            {
+                Console.WriteLine("Escrevendo resultados.csv");
+                GenerateCsvRegisters(directoryResults, registers);
 
-            List<StockControlReport> stocksControl = GetStockControlReport(registers);
+                List<StockControlReport> stocksControl = GetStockControlReport(registers);
 
-            Console.WriteLine("Escrevendo controleacoes.csv");
-            GenerateStockControlReport(directoryResults, stocksControl);
+                Console.WriteLine("Escrevendo controleacoes.csv");
+                GenerateStockControlReport(directoryResults, stocksControl);
 
-            Console.WriteLine("changecontrolreport.xlsx");
-            GenerateChangeControlWorkshet(directoryResults, stocksControl, registers, configuration);
+                Console.WriteLine("changecontrolreport.xlsx");
+                GenerateChangeControlWorkshet(directoryResults, stocksControl, registers, configuration);
+            }
+            else
+            {
+                Console.WriteLine("Escrevendo resultados.csv");
+                GenerateCsvRegisters(directoryResults, registers, typeof(RegisterOnlyResultClassMap));
+            }
         }
 
         private static void GenerateChangeControlWorkshet(string directoryResults, List<StockControlReport> stocksControl, List<Register> registers, Configuration configuration)
@@ -80,10 +88,10 @@ namespace CMGenerator
             ExportCsv(registers, fileName);
         }
 
-        private static void GenerateCsvRegisters(string directoryResults, List<Register> registers)
+        private static void GenerateCsvRegisters(string directoryResults, List<Register> registers, Type classMap = null)
         {
             string fileName = Path.Combine(directoryResults, "resultados.csv");
-            ExportCsv(registers, fileName);
+            ExportCsv(registers, fileName, classMap);
         }
 
         private static List<StockControlReport> GetStockControlReport(List<Register> registers)
@@ -105,13 +113,15 @@ namespace CMGenerator
                            ).OrderBy(x => x.Area).ToList();
         }
 
-        private static void ExportCsv<T>(List<T> registers, string fileName)
+        private static void ExportCsv<T>(List<T> registers, string fileName, Type classMap = null)
         {
             var stream = new MemoryStream();
 
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             {
                 var csv = new CsvWriter(writer);
+                if (classMap != null)
+                    csv.Configuration.RegisterClassMap(classMap);
                 csv.Configuration.Delimiter = ";";
                 csv.WriteHeader<T>();
                 csv.NextRecord();

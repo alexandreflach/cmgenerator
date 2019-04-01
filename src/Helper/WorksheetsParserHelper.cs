@@ -50,7 +50,7 @@ namespace CMGenerator.Helper
             return list;
         }
 
-        internal void LoadProducts(FileInfo file, List<Register> registers, bool fsm)
+        internal void LoadProductsAndJustification(FileInfo file, List<Register> registers, bool fsm)
         {
             using (var p = new ExcelPackage(file))
             {
@@ -72,10 +72,17 @@ namespace CMGenerator.Helper
                             continue;
 
                         var product = GetCellValue(ws, i, Configuration.PositionProduct);
-                        if (string.IsNullOrEmpty(product)) continue;
+                        var justification = GetCellValue(ws, i, Configuration.PositionJustification);
+
+                        if (string.IsNullOrEmpty(product) && string.IsNullOrEmpty(justification)) continue;
 
                         foreach (var r in registers.FindAll(x => x.Number == number))
-                            r.Product = product;
+                        {
+                            if (!string.IsNullOrEmpty(product))
+                                r.Product = product;
+                            if (!string.IsNullOrEmpty(justification))
+                                r.Justification = justification;
+                        }
                     }
                 }
                 catch (FileNotFoundException e)
@@ -135,6 +142,8 @@ namespace CMGenerator.Helper
                     Configuration.PositionExtensionThree = i;
                 if (Configuration.ColumnProduct.Equals(columnName))
                     Configuration.PositionProduct = i;
+                if (Configuration.ColumnJustification.Equals(columnName))
+                    Configuration.PositionJustification = i;
             }
 
             if(validar)

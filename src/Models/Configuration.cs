@@ -30,6 +30,8 @@ namespace CMGenerator.Models
 
         public string ColumnProduct { get; set; }
 
+        public string ColumnJustification { get; internal set; }
+
         public string DateFormat { get; internal set; }
 
         public int PositionNumber { get; internal set; }
@@ -49,6 +51,8 @@ namespace CMGenerator.Models
         public int PositionExtensionThree { get; internal set; }
 
         public int PositionProduct { get; internal set; }
+        
+        public int PositionJustification { get; internal set; }
 
         public static Configuration GetDefault()
         {
@@ -66,6 +70,7 @@ namespace CMGenerator.Models
                 ColumnExtensionTwo = "2º Prorrogação",
                 ColumnExtensionThree = "3º Prorrogação",
                 ColumnProduct = "Código Descrição",
+                ColumnJustification = "Justificativa da Mudança",
                 DateFormat = "d"
             };
         }

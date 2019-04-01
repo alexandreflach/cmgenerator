@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using CsvHelper.Configuration;
 
 namespace cmgenerator.Models
 {
@@ -22,13 +21,29 @@ namespace cmgenerator.Models
 
         public DateTime ExtensionThree { get; set; }
 
-        public string Source { get; set; }
-
         public string Product { get; set; }
+
+        public string Justification { get; set; }
+
+        public string Source { get; set; }
 
         public override string ToString()
         {
             return Number;
+        }
+    }
+
+    public sealed class RegisterOnlyResultClassMap : ClassMap<Register>
+    {
+        public RegisterOnlyResultClassMap()
+        {
+            Map(m => m.Number).Index(0).Name("CM");
+            Map(m => m.Area).Index(1).Name("Área");
+            Map(m => m.Action).Index(2).Name("Ação");
+            Map(m => m.PrevisionDate).Index(3).Name("Data Prevista");
+            Map(m => m.ConclusionDate).Index(4).Name("Data Conclusão");
+            Map(m => m.Product).Index(5).Name("Código Descrição");
+            Map(m => m.Justification).Index(6).Name("Justificativa");
         }
     }
 }

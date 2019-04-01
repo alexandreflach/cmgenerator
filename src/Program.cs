@@ -23,7 +23,13 @@ namespace cmgenerator
 
             var configuracao = Configuration.GetDefault();
 
-            ProcessWorksheets.Execute(Util.GetWorksheetsDirectory(), Util.GetDirectoryDestination(), configuracao, log);
+            bool onlyResults = false;
+
+#if ONLYRESULTS
+            onlyResults = true;
+#endif
+
+            ProcessWorksheets.Execute(Util.GetWorksheetsDirectory(), Util.GetDirectoryDestination(), configuracao, log, onlyResults);
 
             log.Information("Aplicação Finalizada");
         }
