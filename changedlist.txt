@@ -1,0 +1,9 @@
+
+CM.sln
+src/CMGenerator.csproj
+src/Helper/WorksheetsParserHelper.cs
+src/info.txt
+src/Models/Configuration.cs
+src/Models/Register.cs
+src/ProcessWorksheets.cs
+src/Program.cs

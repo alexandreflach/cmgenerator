@@ -16,8 +16,10 @@ namespace CMGenerator.Helper
 
         const string WORKSHEET_RESUME = "ControleDeMudanças";
 
-        public void Create(ExcelPackage excel, List<Register> registers, List<StockControlReport> stocks, Configuration configuration)
+        public void Create(ExcelPackage excel, List<Register> registers, List<StockControlReport> stocks)
         {
+            Configuration configuration = ConfigurationFactory.Get(null);
+
             Dictionary<string, string> areaWorksheetNames = new Dictionary<string, string>();
 
             SetStyles(excel.Workbook);

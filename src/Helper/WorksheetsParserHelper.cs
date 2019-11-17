@@ -6,24 +6,24 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Text;
 
 namespace CMGenerator.Helper
 {
     public class WorksheetsParserHelper
     {
-        public Configuration Configuration { get; }
+        public Configuration Configuration { get; private set; }
 
         public Logger Log { get; }
 
-        public WorksheetsParserHelper(Configuration configuration, Logger log)
+        public WorksheetsParserHelper(Logger log)
         {
-            Configuration = configuration;
             Log = log;
         }
 
         public List<Register> Parse(FileInfo fi)
         {
+            Configuration = ConfigurationFactory.Get(fi);
+
             List<Register> list = new List<Register>();
 
             using (var p = new ExcelPackage(fi))
@@ -34,9 +34,10 @@ namespace CMGenerator.Helper
 
                 LoadColumnPosition(ws);
 
-                for (int i = 2; i < ws.Dimension.End.Row; i++)
+                Register register = null;
+                for (int i = Configuration.RowStart + 1; i < ws.Dimension.End.Row; i++)
                 {
-                    Register register = GetRegister(ws, i);
+                    register = GetRegister(ws, i, register);
                     if (register != null)
                     {
                         register.Source = fi.Name;
@@ -58,21 +59,24 @@ namespace CMGenerator.Helper
                 {
                     var ws = GetWorksheetProduct(p, fsm);
                     LoadColumnPosition(ws, false);
-                    if(Configuration.PositionNumber == int.MinValue || Configuration.PositionProduct == int.MinValue)
+                    if (Configuration.PositionNumber == int.MinValue || Configuration.PositionProduct == int.MinValue)
                     {
-                        Log.Warning(string.Format("Colunas ({0} e {1}) não encontradas Planilha ({2}) arquivo: {3}", 
+                        Log.Warning(string.Format("Colunas ({0} e {1}) não encontradas Planilha ({2}) arquivo: {3}",
                             Configuration.ColumnNumber, Configuration.ColumnProduct, ws.Name, file.Name));
                         return;
                     }
 
-                    for (int i = 2; i < ws.Dimension.End.Row; i++)
+                    for (int i = Configuration.RowStart + 1; i < ws.Dimension.End.Row; i++)
                     {
                         var number = GetCellValue(ws, i, Configuration.PositionNumber);
                         if (string.IsNullOrEmpty(number) || !registers.Exists(x => x.Number == number))
                             continue;
 
                         var product = GetCellValue(ws, i, Configuration.PositionProduct);
+                        var productDescription = GetCellValue(ws, i, Configuration.PositionProductDescription);
                         var justification = GetCellValue(ws, i, Configuration.PositionJustification);
+
+                        if (!string.IsNullOrEmpty(productDescription)) product = string.Format("{0} - {1}", product, productDescription);
 
                         if (string.IsNullOrEmpty(product) && string.IsNullOrEmpty(justification)) continue;
 
@@ -92,22 +96,34 @@ namespace CMGenerator.Helper
             }
         }
 
-        private Register GetRegister(ExcelWorksheet ws, int rowNumber)
+        private Register GetRegister(ExcelWorksheet ws, int rowNumber, Register previousRegister)
         {
             try
             {
-                var number = GetCellValue(ws, rowNumber, Configuration.PositionNumber);
-                if (string.IsNullOrEmpty(number)) return null;
-
                 var register = new Register();
-                register.Number = number;
+                var number = GetCellValue(ws, rowNumber, Configuration.PositionNumber);
+                if (string.IsNullOrEmpty(number))
+                {
+                    if (previousRegister != null)
+                        register.Number = previousRegister.Number;
+                    else
+                        return null;
+                }
+                else
+                {
+                    register.Number = number;
+                }
+
                 register.Area = AreaHelper.GetArea(GetCellValue(ws, rowNumber, Configuration.PositionResponsibleArea));
                 register.Action = Configuration.PositionAction != int.MinValue ? GetCellValue(ws, rowNumber, Configuration.PositionAction) : string.Empty;
+
+                if (register.Area == null && string.IsNullOrEmpty(register.Action)) return null;
+
                 register.PrevisionDate = GetDateCellValue(ws, rowNumber, Configuration.PositionPrevisionDate);
                 register.ConclusionDate = GetDateCellValue(ws, rowNumber, Configuration.PositionConclusionDate);
-                register.ExtensionOne = GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionOne);
-                register.ExtensionTwo = GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionTwo);
-                register.ExtensionThree = GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionThree);
+                register.ExtensionOne = Configuration.PositionExtensionOne != int.MinValue ? GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionOne) : DateTime.MinValue;
+                register.ExtensionTwo = Configuration.PositionExtensionTwo != int.MinValue ? GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionTwo) : DateTime.MinValue;
+                register.ExtensionThree = Configuration.PositionExtensionThree != int.MinValue ? GetDateCellValue(ws, rowNumber, Configuration.PositionExtensionThree) : DateTime.MinValue;
                 return register;
             }
             catch (Exception e)
@@ -123,7 +139,7 @@ namespace CMGenerator.Helper
 
             for (int i = 1; i < ws.Dimension.End.Column; i++)
             {
-                var columnName = GetCellValue(ws, 1, i);
+                var columnName = GetCellValue(ws, Configuration.RowStart, i);
                 if (Configuration.ColumnNumber.Equals(columnName))
                     Configuration.PositionNumber = i;
                 if (Configuration.ColumnResposibleArea.Equals(columnName))
@@ -142,11 +158,13 @@ namespace CMGenerator.Helper
                     Configuration.PositionExtensionThree = i;
                 if (Configuration.ColumnProduct.Equals(columnName))
                     Configuration.PositionProduct = i;
+                if (Configuration.ColumnProductDescription.Equals(columnName))
+                    Configuration.PositionProductDescription = i;
                 if (Configuration.ColumnJustification.Equals(columnName))
                     Configuration.PositionJustification = i;
             }
 
-            if(validar)
+            if (validar)
                 Configuration.ValidatedPosition();
         }
 

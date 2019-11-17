@@ -21,15 +21,13 @@ namespace cmgenerator
                 return;
             }
 
-            var configuracao = Configuration.GetDefault();
-
             bool onlyResults = false;
 
 #if ONLYRESULTS
             onlyResults = true;
 #endif
 
-            ProcessWorksheets.Execute(Util.GetWorksheetsDirectory(), Util.GetDirectoryDestination(), configuracao, log, onlyResults);
+            ProcessWorksheets.Execute(Util.GetWorksheetsDirectory(), Util.GetDirectoryDestination(), log, onlyResults);
 
             log.Information("Aplicação Finalizada");
         }

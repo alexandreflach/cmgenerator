@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CMGenerator.Models
 {
@@ -30,9 +28,13 @@ namespace CMGenerator.Models
 
         public string ColumnProduct { get; set; }
 
+        public string ColumnProductDescription { get; set; }
+
         public string ColumnJustification { get; internal set; }
 
         public string DateFormat { get; internal set; }
+
+        public int RowStart { get; internal set; }
 
         public int PositionNumber { get; internal set; }
 
@@ -51,29 +53,10 @@ namespace CMGenerator.Models
         public int PositionExtensionThree { get; internal set; }
 
         public int PositionProduct { get; internal set; }
-        
-        public int PositionJustification { get; internal set; }
 
-        public static Configuration GetDefault()
-        {
-            return new Configuration
-            {
-                WorksheetName = "Controle das Ações",
-                WorksheetProductName = "CM",
-                WorksheetFsmProductName = "FSM",
-                ColumnNumber = "CM",
-                ColumnResposibleArea = "Área Responsável",
-                ColumnAction = "Plano de Ação",
-                ColumnPrevisionDate = "Previsão para Conclusão",
-                ColumnConclusionDate = "Data de Conclusão da Ação",
-                ColumnExtensionOne = "1º Prorrogação",
-                ColumnExtensionTwo = "2º Prorrogação",
-                ColumnExtensionThree = "3º Prorrogação",
-                ColumnProduct = "Código Descrição",
-                ColumnJustification = "Justificativa da Mudança",
-                DateFormat = "d"
-            };
-        }
+        public int PositionProductDescription { get; internal set; }
+
+        public int PositionJustification { get; internal set; }
 
         internal void CleanPosition()
         {
@@ -95,15 +78,6 @@ namespace CMGenerator.Models
 
             if (PositionConclusionDate == int.MinValue)
                 throw new Exception("Informe posição da Data de Conclusão");
-
-            if (PositionExtensionOne == int.MinValue)
-                throw new Exception("Informe posição da 1ª Prorrogação");
-
-            if (PositionExtensionTwo == int.MinValue)
-                throw new Exception("Informe posição da 2ª Prorrogação");
-
-            if (PositionExtensionThree == int.MinValue)
-                throw new Exception("Informe posição da 3ª Prorrogação");
         }
     }
 }

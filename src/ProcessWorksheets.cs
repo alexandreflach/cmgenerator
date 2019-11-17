@@ -14,9 +14,9 @@ namespace CMGenerator
 {
     public class ProcessWorksheets
     {
-        internal static void Execute(string directoryWorksheets, string directoryResults, Configuration configuration, Logger log, bool onlyResults)
+        internal static void Execute(string directoryWorksheets, string directoryResults, Logger log, bool onlyResults)
         {
-            var parserHelper = new WorksheetsParserHelper(configuration, log);
+            var parserHelper = new WorksheetsParserHelper(log);
 
             List<Register> registers = new List<Register>();
 
@@ -58,7 +58,7 @@ namespace CMGenerator
                 GenerateStockControlReport(directoryResults, stocksControl);
 
                 Console.WriteLine("changecontrolreport.xlsx");
-                GenerateChangeControlWorkshet(directoryResults, stocksControl, registers, configuration);
+                GenerateChangeControlWorkshet(directoryResults, stocksControl, registers);
             }
             else
             {
@@ -67,7 +67,7 @@ namespace CMGenerator
             }
         }
 
-        private static void GenerateChangeControlWorkshet(string directoryResults, List<StockControlReport> stocksControl, List<Register> registers, Configuration configuration)
+        private static void GenerateChangeControlWorkshet(string directoryResults, List<StockControlReport> stocksControl, List<Register> registers)
         {
             string fileName = Path.Combine(directoryResults, "changecontrolreport.xlsx");
             if (File.Exists(fileName))
@@ -77,7 +77,7 @@ namespace CMGenerator
 
             using (var p = new ExcelPackage(fi))
             {
-                new ChangeControlReport().Create(p, registers, stocksControl, configuration);
+                new ChangeControlReport().Create(p, registers, stocksControl);
                 p.Save();
             }
         }

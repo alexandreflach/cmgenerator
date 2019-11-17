@@ -11,6 +11,8 @@ namespace CMGenerator.Helper
 
         public static Area GetArea(string name)
         {
+            if (string.IsNullOrEmpty(name)) return null;
+
             var area = _list.Find(x => x.Name.ToUpper().Equals(name.Trim().ToUpper()));
             if (area != null) return area;
 
