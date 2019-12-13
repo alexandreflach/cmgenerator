@@ -61,7 +61,8 @@ namespace CMGenerator.Models
         internal void CleanPosition()
         {
             PositionNumber = PositionConclusionDate = PositionResponsibleArea = PositionAction = PositionPrevisionDate
-                = PositionExtensionOne = PositionExtensionTwo = PositionExtensionThree = PositionProduct
+                = PositionExtensionOne = PositionExtensionTwo = PositionExtensionThree = PositionProduct 
+                = PositionProductDescription = PositionJustification
                 = int.MinValue;
         }
 

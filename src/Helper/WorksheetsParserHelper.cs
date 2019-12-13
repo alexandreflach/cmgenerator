@@ -53,6 +53,8 @@ namespace CMGenerator.Helper
 
         internal void LoadProductsAndJustification(FileInfo file, List<Register> registers, bool fsm)
         {
+            Configuration = ConfigurationFactory.Get(file);
+
             using (var p = new ExcelPackage(file))
             {
                 try
@@ -73,7 +75,8 @@ namespace CMGenerator.Helper
                             continue;
 
                         var product = GetCellValue(ws, i, Configuration.PositionProduct);
-                        var productDescription = GetCellValue(ws, i, Configuration.PositionProductDescription);
+                        var productDescription = Configuration.PositionProductDescription != int.MinValue 
+                            ? GetCellValue(ws, i, Configuration.PositionProductDescription) : string.Empty;
                         var justification = GetCellValue(ws, i, Configuration.PositionJustification);
 
                         if (!string.IsNullOrEmpty(productDescription)) product = string.Format("{0} - {1}", product, productDescription);
